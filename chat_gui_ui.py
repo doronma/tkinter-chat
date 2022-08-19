@@ -61,3 +61,9 @@ class MainView(tk.Frame):
     def receive(self, event):
         print("got - " + event)
         self.msg_list.insert(tk.END, event)
+
+    def event_dispatcher(self, type, msg=None):
+        """ Manage events from socket """
+        match type:
+            case "RECEIVE":
+                self.receive(msg)

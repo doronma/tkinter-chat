@@ -9,9 +9,9 @@ ADDR = (HOST, PORT)
 
 
 class SocketClient:
-    def __init__(self,  view):
+    def __init__(self,  view_dispatcher):
 
-        self.view = view
+        self.view_dispatcher = view_dispatcher
         self.client_socket = socket(AF_INET, SOCK_STREAM)
         self.client_socket.connect(ADDR)
 
@@ -20,7 +20,7 @@ class SocketClient:
         while True:
             try:
                 msg = self.client_socket.recv(BUFSIZ).decode("utf8")
-                self.view.receive(msg)
+                self.view_dispatcher("RECEIVE", msg)
             except OSError:  # Possibly client has left the chat.
                 break
 

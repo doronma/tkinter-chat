@@ -10,7 +10,7 @@ if __name__ == '__main__':
     """ Create GUI  """
     root = tk.Tk()
     view = MainView(root)
-    socket_client = SocketClient(view)
+    socket_client = SocketClient(view.event_dispatcher)
     view.set_event_dispatcher(socket_client.eventDispatcher)
 
     def on_closing(event=None):
