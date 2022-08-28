@@ -9,9 +9,10 @@ def accept_incoming_connections():
     while True:
         client, client_address = SERVER.accept()
         print("%s:%s has connected." % client_address)
-        client.send(
-            bytes("Greetings from the cave! Now type your name and press enter!", "utf8"))
+        # client.send(
+        #     bytes("Greetings from the cave! Now type your name and press enter!", "utf8"))
         addresses[client] = client_address
+        # creats a thred for  spasific client
         Thread(target=handle_client, args=(client,)).start()
 
 
@@ -23,9 +24,11 @@ def handle_client(client):  # Takes client socket as argument.
     client.send(bytes(welcome, "utf8"))
     msg = "%s has joined the chat!" % name
     broadcast(bytes(msg, "utf8"))
+    # addds the client to the dict so that the brodcast could work
     clients[client] = name
 
     while True:
+        # gets msg from the client and sends it to everyone else.
         msg = client.recv(BUFSIZ)
         print(msg.decode("utf8"))
         if msg != bytes("{quit}", "utf8"):
@@ -57,8 +60,10 @@ SERVER = socket(AF_INET, SOCK_STREAM)
 SERVER.bind(ADDR)
 
 if __name__ == "__main__":
+    # specifies the number of unaccepted connections that the system will allow before refusing new connections
     SERVER.listen(5)
     print("Waiting for connection...")
+    # creats a thread which takes care of clients
     ACCEPT_THREAD = Thread(target=accept_incoming_connections)
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
