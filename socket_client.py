@@ -8,11 +8,12 @@ BUFSIZ = 1024
 
 
 class SocketClient:
+    """Socket Client Side Class"""
+
     def __init__(self,  view_dispatcher):
 
         self.view_dispatcher = view_dispatcher
         self.client_socket = socket(AF_INET, SOCK_STREAM)
-        # self.client_socket.connect(ADDR)
 
     def receive(self):
         """Handles receiving of messages."""
@@ -23,17 +24,17 @@ class SocketClient:
             except OSError:  # Possibly client has left the chat.
                 break
 
-    def eventDispatcher(self, type, data=None):
+    def event_dispatcher(self, event_type, data=None):
         """ Manage events from gui """
-        match type:
+        match event_type:
             case "CONNECT":
                 print("connecting")
                 # HOST = "localhost"
                 # PORT = 33000
                 host, port, user = data
-                ADDR = host, port
-                self.client_socket.connect(ADDR)
-                """ Start Socket Listning Thred """
+                address = host, port
+                self.client_socket.connect(address)
+                # Start Socket Listning Thred
                 receive_thread = Thread(target=self.receive)
                 receive_thread.start()
                 self.client_socket.send(bytes(user, "utf8"))

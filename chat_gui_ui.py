@@ -1,17 +1,28 @@
+""" UI Code"""
 import tkinter as tk
 
 
 class MainView(tk.Frame):
+    """ Main Frame"""
 
     def __init__(self, master):
         self.master = master
 
         tk.Frame.__init__(self, self.master)
+
+        # setup memberes
+        self.messaging_dispatcher = None
+        self.messages_frame = None
+        self.msg_list = None
+        self.about_window = None
+        self.my_msg = None
+        self.properties_window = None
+        # init gui
         self.configure_gui()
         self.create_widgets()
 
-    def set_event_dispatcher(self, event_dispathcer):
-        self.event_dispatcher = event_dispathcer
+    def set_event_dispatcher(self, messaging_dispatcher):
+        self.messaging_dispatcher = messaging_dispatcher
 
     def configure_gui(self):
         self.pack()
@@ -20,7 +31,7 @@ class MainView(tk.Frame):
         self.create_menu()
         self.create_properties_window()
 
-    def generate_messages_frame(self):
+    def create_messages_frame(self):
         self.messages_frame = tk.Frame(self)
 
         scrollbar = tk.Scrollbar(self.messages_frame)
@@ -31,35 +42,36 @@ class MainView(tk.Frame):
         self.msg_list.pack()
         self.messages_frame.pack()
 
-    def generate_message(self):
+    def create_message(self):
         self.my_msg = tk.StringVar()  # For the messages to be sent.
 
     def create_entry_field(self):
         entry_field = tk.Entry(self, textvariable=self.my_msg)
-        entry_field.bind("<Return>", self.send)
+        entry_field.bind("<Return>", self.cb_send)
         entry_field.pack()
 
     def create_send_button(self):
-        send_button = tk.Button(self, text="Send", command=self.send)
+        send_button = tk.Button(self, text="Send", command=self.cb_send)
         send_button.pack()
 
     def create_menu(self):
         menu = tk.Menu(self.master)
         self.master.config(menu=menu)
 
-        fileMenu = tk.Menu(menu, tearoff=0)
-        fileMenu.add_command(label="Exit", command=self.force_quit)
-        menu.add_cascade(label="File", menu=fileMenu)
+        file_menu = tk.Menu(menu, tearoff=0)
+        file_menu.add_command(label="Exit", command=self.force_quit)
+        menu.add_cascade(label="File", menu=file_menu)
 
-        helpMenu = tk.Menu(menu, tearoff=0)
-        helpMenu.add_command(label="About", command=self.aboutProgram)
-        menu.add_cascade(label="Help", menu=helpMenu)
+        help_menu = tk.Menu(menu, tearoff=0)
+        help_menu.add_command(label="About", command=self.create_about_dialog)
+        menu.add_cascade(label="Help", menu=help_menu)
 
-    def aboutProgram(self):
+    def create_about_dialog(self):
         self.about_window = tk.Toplevel(self)
         self.about_window.geometry("500x150")
         # Create a Label Text
-        label = tk.Label(self.about_window, text="this is a chat pogram witch uses python, gui and threds",
+        dialog_text = "this is a chat pogram witch uses python, gui and threds"
+        label = tk.Label(self.about_window, text=dialog_text,
                          font=('Aerial', 12))
         label.pack(pady=20)
         # Add a Frame
@@ -67,7 +79,7 @@ class MainView(tk.Frame):
         frame.pack(pady=10)
         # Add Button for making selection
         button = tk.Button(frame, text="Close",
-                           command=lambda: self.about_window.destroy(), bg="blue", fg="white")
+                           command=self.about_window.destroy, bg="blue", fg="white")
         button.grid(row=0, column=1)
 
     def create_properties_window(self):
@@ -118,37 +130,35 @@ class MainView(tk.Frame):
     def save_properties(self, host, port, user):
         print(host, port, user)
         self.properties_window.destroy()
-        self.generate_messages_frame()
-        self.generate_message()
+        self.create_messages_frame()
+        self.create_message()
         self.create_entry_field()
         self.create_send_button()
-        self.event_dispatcher("CONNECT", (host, int(port), user))
+        self.messaging_dispatcher("CONNECT", (host, int(port), user))
 
     def show_properties(self, host, port, user_name):
         print(host, port, user_name)
         self.messages_frame.destroy()
 
-    def send(self, event=None):
+    def cb_send(self, event=None):
         msg = self.my_msg.get()
         self.my_msg.set("")  # Clears input field.
-        self.event_dispatcher("SEND_MESSAGE", msg)
+        self.messaging_dispatcher("SEND_MESSAGE", msg)
         if msg == "{quit}":
-            self.event_dispatcher("EXIT")
+            self.messaging_dispatcher("EXIT")
             self.quit()
 
     def force_quit(self):
-        if hasattr(self, 'my_msg'):
-            print("sending")
+        if self.my_msg:
             self.my_msg.set("{quit}")
-            self.send()
+            self.cb_send()
         self.quit()
 
     def receive(self, event):
-        print("got - " + event)
         self.msg_list.insert(tk.END, event)
 
-    def event_dispatcher(self, type, msg=None):
+    def event_dispatcher(self, event_type, msg=None):
         """ Manage events from socket """
-        match type:
+        match event_type:
             case "RECEIVE":
                 self.receive(msg)

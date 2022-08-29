@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""Main Client App
-
-11"""
+"""Main Client App"""
 import tkinter as tk
 from chat_gui_ui import MainView
 from socket_client import SocketClient
@@ -13,11 +11,11 @@ if __name__ == '__main__':
     view = MainView(root)
 
     socket_client = SocketClient(view.event_dispatcher)
-    view.set_event_dispatcher(socket_client.eventDispatcher)
+    view.set_event_dispatcher(socket_client.event_dispatcher)
 
-    def on_closing(event=None):
+    def cb_on_closing(event=None):
         view.force_quit()
 
-    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.protocol("WM_DELETE_WINDOW", cb_on_closing)
 
     root.mainloop()
