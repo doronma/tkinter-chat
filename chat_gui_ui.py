@@ -42,9 +42,6 @@ class MainView(tk.Frame):
         self.msg_list.pack()
         self.messages_frame.pack()
 
-    def create_message(self):
-        self.my_msg = tk.StringVar()  # For the messages to be sent.
-
     def create_entry_field(self):
         entry_field = tk.Entry(self, textvariable=self.my_msg)
         entry_field.bind("<Return>", self.cb_send)
@@ -116,25 +113,42 @@ class MainView(tk.Frame):
         user_field = tk.Entry(self.properties_window, textvariable=user_var)
         user_field.grid(column=1, row=2, sticky=tk.W)
 
+        password_label = tk.Label(self.properties_window, text="Password:",
+                                  font=('Aerial', 12))
+        password_label.grid(column=0, row=3, sticky=tk.W)
+        password_var = tk.StringVar()  # For the messages to be sent.
+        password_var.set("")
+        password_field = tk.Entry(
+            self.properties_window, textvariable=password_var)
+        password_field.grid(column=1, row=3, sticky=tk.W)
+
         button_frame = tk.Frame(self.properties_window, bg="gray71")
         save_button = tk.Button(button_frame, text="Save", command=lambda: self.save_properties(
-            host_var.get(), port_var.get(), user_var.get()), bg="blue", fg="white")
+            host_var.get(),
+            port_var.get(),
+            user_var.get(),
+            password_var.get()),
+            bg="blue", fg="white")
         save_button.grid(column=0, row=0, sticky=tk.W)
 
-        button_frame.grid(column=0, row=3)
+        button_frame.grid(column=0, row=4)
 
         for widget in self.properties_window.winfo_children():
             widget.grid(padx=0, pady=5)
         self.properties_window.pack()
 
-    def save_properties(self, host, port, user):
+    def save_properties(self, host, port, user, password):
         print(host, port, user)
-        self.properties_window.destroy()
+        # self.properties_window.destroy()
+        # self.create_main_frame()
+        self.messaging_dispatcher("CONNECT", (host, int(port), user, password))
+
+    def create_main_frame(self):
+        # TODO try to create one method with less class members
         self.create_messages_frame()
-        self.create_message()
+        self.my_msg = tk.StringVar()  # For the messages to be sent.
         self.create_entry_field()
         self.create_send_button()
-        self.messaging_dispatcher("CONNECT", (host, int(port), user))
 
     def show_properties(self, host, port, user_name):
         print(host, port, user_name)
@@ -162,3 +176,16 @@ class MainView(tk.Frame):
         match event_type:
             case "RECEIVE":
                 self.receive(msg)
+            case "LOGIN_OK":
+                self.show_main_dialog()
+            case "LOGIN_ERROR":
+                self.show_login_error()
+
+    def show_main_dialog(self):
+        self.properties_window.destroy()
+        self.create_main_frame()
+
+    def show_login_error(self):
+        error_label = tk.Label(self.properties_window, text="Wrong Password", fg='red',
+                               font=('Aerial', 9,))
+        error_label.grid(column=0, row=6, sticky=tk.W)

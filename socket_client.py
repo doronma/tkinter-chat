@@ -13,7 +13,7 @@ class SocketClient:
     def __init__(self,  view_dispatcher):
 
         self.view_dispatcher = view_dispatcher
-        self.client_socket = socket(AF_INET, SOCK_STREAM)
+        self.client_socket = None
 
     def receive(self):
         """Handles receiving of messages."""
@@ -28,16 +28,26 @@ class SocketClient:
         """ Manage events from gui """
         match event_type:
             case "CONNECT":
+                self.client_socket = socket(AF_INET, SOCK_STREAM)
                 print("connecting")
                 # HOST = "localhost"
                 # PORT = 33000
-                host, port, user = data
+                host, port, user, password = data
                 address = host, port
                 self.client_socket.connect(address)
-                # Start Socket Listning Thred
-                receive_thread = Thread(target=self.receive)
-                receive_thread.start()
-                self.client_socket.send(bytes(user, "utf8"))
+                self.client_socket.send(bytes(user + ":" + password, "utf8"))
+                msg = self.client_socket.recv(BUFSIZ).decode("utf8")
+                print("Message is - " + msg)
+                if msg == "OK":
+                    self.view_dispatcher("LOGIN_OK")
+                    # Start Socket Listning Thred
+                    receive_thread = Thread(target=self.receive)
+                    receive_thread.start()
+                else:
+                    self.view_dispatcher("LOGIN_ERROR")
+                    print("Erorr message is - " + msg)
+                    self.client_socket.close()
+
 
             case "SEND_MESSAGE":
                 self.client_socket.send(bytes(data, "utf8"))

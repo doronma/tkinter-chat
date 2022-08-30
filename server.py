@@ -3,24 +3,46 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 
+user_dict = {"Dave": "12345", "Yaara": "23456", "guest": ""}
+
 
 def accept_incoming_connections():
     """Sets up handling for incoming clients."""
     while True:
         client, client_address = SERVER.accept()
-        print(f"{client_address} has connected." )
+        print(f"{client_address} has connected.")
         addresses[client] = client_address
         # creats a thred for  spasific client
         Thread(target=handle_client, args=(client,)).start()
 
 
+def login_ok(name, password):
+    if name in user_dict:
+        return user_dict[name] == password
+    return False
+
+
 def handle_client(client):  # Takes client socket as argument.
     """Handles a single client connection."""
 
-    name = client.recv(BUFSIZ).decode("utf8")
-    welcome = f'Welcome {name}! If you ever want to quit, type {{quit}} to exit.'
-    client.send(bytes(welcome, "utf8"))
-    msg = f"{name} has joined the chat!"
+    user = client.recv(BUFSIZ).decode("utf8")
+    name, password = user.split(":")
+    print(name, password)
+
+    # Login OK
+    if login_ok(name, password):
+        welcome = f'Welcome {name}! If you ever want to quit, type {{quit}} to exit.'
+        client.send(bytes("OK", "utf8"))
+        client.send(bytes(welcome, "utf8"))
+        msg = f"{name} has joined the chat!"
+        start_brodcast(client, name, msg)
+    # Login Failure
+    else:
+        client.send(bytes("ERROR", "utf8"))
+        client.close()
+
+
+def start_brodcast(client, name, msg):
     broadcast(bytes(msg, "utf8"))
     # addds the client to the dict so that the brodcast could work
     clients[client] = name
