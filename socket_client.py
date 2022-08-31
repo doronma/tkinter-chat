@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Script for Tkinter GUI chat client."""
+import json
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 
@@ -32,10 +33,11 @@ class SocketClient:
                 print("connecting")
                 # HOST = "localhost"
                 # PORT = 33000
-                host, port, user, password = data
-                address = host, port
-                self.client_socket.connect(address)
-                self.client_socket.send(bytes(user + ":" + password, "utf8"))
+                connection_data, action_data = data
+                self.client_socket.connect(connection_data)
+                print("sending")
+                print(json.dumps(action_data))
+                self.client_socket.send(bytes(json.dumps(action_data) , "utf8"))
                 msg = self.client_socket.recv(BUFSIZ).decode("utf8")
                 print("Message is - " + msg)
                 if msg == "OK":

@@ -1,5 +1,6 @@
 """ UI Code"""
 import tkinter as tk
+from properties_frame import PropertiesFrame
 
 
 class MainView(tk.Frame):
@@ -29,7 +30,8 @@ class MainView(tk.Frame):
 
     def create_widgets(self):
         self.create_menu()
-        self.create_properties_window()
+        #self.create_properties_window()
+        self.properties_window = PropertiesFrame(self)
 
     def create_messages_frame(self):
         self.messages_frame = tk.Frame(self)
@@ -79,72 +81,14 @@ class MainView(tk.Frame):
                            command=self.about_window.destroy, bg="blue", fg="white")
         button.grid(row=0, column=1)
 
-    def create_properties_window(self):
-        self.properties_window = tk.Frame(self)
-
-        self.properties_window.columnconfigure(0, weight=1)
-        self.properties_window.columnconfigure(1, weight=3)
-
-        label = tk.Label(self.properties_window, text="Host Name:",
-                         font=('Aerial', 12))
-        label.grid(column=0, row=0, sticky=tk.W)
-
-        host_var = tk.StringVar()  # For the messages to be sent.
-        host_var.set("localhost")
-        host_field = tk.Entry(self.properties_window, textvariable=host_var)
-        host_field.focus()
-        host_field.grid(column=1, row=0, sticky=tk.W)
-
-        port_label = tk.Label(self.properties_window, text="Port Number:",
-                              font=('Aerial', 12))
-        port_label.grid(column=0, row=1, sticky=tk.W)
-
-        port_var = tk.StringVar()  # For the messages to be sent.
-        port_var.set("33000")
-        port_field = tk.Entry(self.properties_window, textvariable=port_var)
-        port_field.grid(column=1, row=1, sticky=tk.W)
-
-        user_label = tk.Label(self.properties_window, text="User Name:",
-                              font=('Aerial', 12))
-        user_label.grid(column=0, row=2, sticky=tk.W)
-
-        user_var = tk.StringVar()  # For the messages to be sent.
-        user_var.set("guest")
-        user_field = tk.Entry(self.properties_window, textvariable=user_var)
-        user_field.grid(column=1, row=2, sticky=tk.W)
-
-        password_label = tk.Label(self.properties_window, text="Password:",
-                                  font=('Aerial', 12))
-        password_label.grid(column=0, row=3, sticky=tk.W)
-        password_var = tk.StringVar()  # For the messages to be sent.
-        password_var.set("")
-        password_field = tk.Entry(
-            self.properties_window, textvariable=password_var)
-        password_field.grid(column=1, row=3, sticky=tk.W)
-
-        button_frame = tk.Frame(self.properties_window, bg="gray71")
-        save_button = tk.Button(button_frame, text="Save", command=lambda: self.save_properties(
-            host_var.get(),
-            port_var.get(),
-            user_var.get(),
-            password_var.get()),
-            bg="blue", fg="white")
-        save_button.grid(column=0, row=0, sticky=tk.W)
-
-        button_frame.grid(column=0, row=4)
-
-        for widget in self.properties_window.winfo_children():
-            widget.grid(padx=0, pady=5)
-        self.properties_window.pack()
 
     def save_properties(self, host, port, user, password):
-        print(host, port, user)
-        # self.properties_window.destroy()
-        # self.create_main_frame()
-        self.messaging_dispatcher("CONNECT", (host, int(port), user, password))
+        print("in save properties")
+        action = "login"
+        action_data = { "action" : action , "user_data" : {"user":user,"password":password} }
+        self.messaging_dispatcher("CONNECT",((host, int(port)), action_data ))
 
     def create_main_frame(self):
-        # TODO try to create one method with less class members
         self.create_messages_frame()
         self.my_msg = tk.StringVar()  # For the messages to be sent.
         self.create_entry_field()

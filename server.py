@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Server for multithreaded (asynchronous) chat application."""
+import json
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 
@@ -25,12 +26,13 @@ def login_ok(name, password):
 def handle_client(client):  # Takes client socket as argument.
     """Handles a single client connection."""
 
-    user = client.recv(BUFSIZ).decode("utf8")
-    name, password = user.split(":")
-    print(name, password)
+    action_data_json = client.recv(BUFSIZ).decode("utf8")
+    action_data = json.loads(action_data_json)
+    user_data = action_data['user_data']
+    name = user_data['user']
 
     # Login OK
-    if login_ok(name, password):
+    if login_ok(name, user_data['password']):
         welcome = f'Welcome {name}! If you ever want to quit, type {{quit}} to exit.'
         client.send(bytes("OK", "utf8"))
         client.send(bytes(welcome, "utf8"))
