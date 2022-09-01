@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Main Client App"""
 import tkinter as tk
-from chat_gui_ui import MainView
+from gui.chat_gui_ui import MainView
 from socket_client import SocketClient
 
 if __name__ == '__main__':
