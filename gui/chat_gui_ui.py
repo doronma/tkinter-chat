@@ -33,14 +33,14 @@ class MainView(tk.Frame):
         self.messages_frame = tk.Frame(self)
         scrollbar = tk.Scrollbar(self.messages_frame)
         self.msg_list = tk.Listbox(self.messages_frame, height=15,
-                                   width=60, yscrollcommand=scrollbar.set)
+                                   width=70, yscrollcommand=scrollbar.set)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.msg_list.pack(side=tk.LEFT, fill=tk.BOTH)
         self.msg_list.pack()
         self.messages_frame.pack()
 
     def create_entry_field(self):
-        entry_field = tk.Entry(self, textvariable=self.my_msg,width=55)
+        entry_field = tk.Entry(self, textvariable=self.my_msg,width=65)
         entry_field.bind("<Return>", self.cb_send)
         entry_field.pack()
 
@@ -108,6 +108,6 @@ class MainView(tk.Frame):
         self.create_main_frame()
 
     def show_login_error(self):
-        error_label = tk.Label(self.properties_window, text="Wrong Password", fg='red',
+        error_label = tk.Label(self.properties_window,name="lblError" ,text="Login Error", fg='red',
                                font=('Aerial', 9,))
         error_label.grid(column=0, row=6, sticky=tk.W)

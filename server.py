@@ -3,8 +3,8 @@
 import json
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
-yaara_user = { "user": "yaara.marcus@gmail.com", "password": "12345", "nickname":"Yaara"}
-user_dict = {"yaara.marcus@gmail.com": yaara_user}
+
+user_dict = {}
 
 
 def accept_incoming_connections():
@@ -46,10 +46,13 @@ def handle_client(client):  # Takes client socket as argument.
             client.send(bytes("ERROR", "utf8"))
             client.close()
     if action == "signin":
-       print("in signin")
-       user_dict[user_data['user']] = { "user": user_data['user'], "password": user_data['password'], "nickname":user_data['nickname']}
-       print(user_dict)
-       client.send(bytes("SIGNIN", "utf8"))
+        print("in signin")
+        user_dict[user_data['user']] = {
+            "user": user_data['user'],
+            "password": user_data['password'],
+            "nickname": user_data['nickname']}
+        print(user_dict)
+        client.send(bytes("SIGNIN", "utf8"))
 
 
 def start_brodcast(client, name, msg):
@@ -64,7 +67,6 @@ def start_brodcast(client, name, msg):
         if msg != bytes("{quit}", "utf8"):
             broadcast(msg, name+": ")
         else:
-            #client.send(bytes("{quit}", "utf8"))
             client.close()
             del clients[client]
             broadcast(bytes(f"{name} has left the chat.", "utf8"))

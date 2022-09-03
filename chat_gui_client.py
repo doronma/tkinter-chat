@@ -7,7 +7,7 @@ from socket_client import SocketClient
 if __name__ == '__main__':
 
     root = tk.Tk()
-    root.geometry('400x300')
+    root.geometry('500x350')
     root.iconbitmap('./gui/icons/Chat.ico')
     view = MainView(root)
 

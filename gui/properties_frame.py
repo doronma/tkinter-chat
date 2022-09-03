@@ -55,8 +55,8 @@ class PropertiesFrame(tk.Frame):
             self.children['btn_signin'].configure(text="OK")
             self.generate_nickname_field()
             self.state_signup = True
+            self.children['lblError'].configure(text="")
         else:
-            
             self.parent_frame.signin(
                                      self.host_var.get(),
                                      self.port_var.get(),
@@ -87,7 +87,7 @@ class PropertiesFrame(tk.Frame):
                               font=('Aerial', 12))
         user_label.grid(column=0, row=4, sticky=tk.W)
         self.user_var = tk.StringVar()  # For the messages to be sent.
-        self.user_var.set("guest")
+        self.user_var.set("")
         user_field = tk.Entry(self, textvariable=self.user_var)
         user_field.grid(column=1, row=4, sticky=tk.W)
 
