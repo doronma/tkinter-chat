@@ -30,19 +30,26 @@ def handle_client(client):  # Takes client socket as argument.
     action_data = json.loads(action_data_json)
     user_data = action_data['user_data']
     name = user_data['user']
+    action = action_data['action']
 
-    # Login OK
-    if login_ok(name, user_data['password']):
-        nickname = user_dict[name]['nickname'] 
-        welcome = f'Welcome {nickname}! If you ever want to quit, type {{quit}} to exit.'
-        client.send(bytes("OK", "utf8"))
-        client.send(bytes(welcome, "utf8"))
-        msg = f"{nickname} has joined the chat!"
-        start_brodcast(client, nickname, msg)
-    # Login Failure
-    else:
-        client.send(bytes("ERROR", "utf8"))
-        client.close()
+    if action == "login":
+        if login_ok(name, user_data['password']):
+            # Login OK
+            nickname = user_dict[name]['nickname']
+            welcome = f'Welcome {nickname}! If you ever want to quit, type {{quit}} to exit.'
+            client.send(bytes("OK", "utf8"))
+            client.send(bytes(welcome, "utf8"))
+            msg = f"{nickname} has joined the chat!"
+            start_brodcast(client, nickname, msg)
+        else:
+            # Login Failure
+            client.send(bytes("ERROR", "utf8"))
+            client.close()
+    if action == "signin":
+       print("in signin")
+       user_dict[user_data['user']] = { "user": user_data['user'], "password": user_data['password'], "nickname":user_data['nickname']}
+       print(user_dict)
+       client.send(bytes("SIGNIN", "utf8"))
 
 
 def start_brodcast(client, name, msg):

@@ -45,23 +45,30 @@ class PropertiesFrame(tk.Frame):
                                      self.password_var.get()))
         login_button.grid(column=0, row=8, sticky=tk.W)
         register_button = tk.Button(
-            self, name="btn_signup", text="Signup", bg="blue", fg="white", command=self.cb_signup)
+            self, name="btn_signin", text="Signin", bg="blue", fg="white", command=self.cb_signin)
         register_button.grid(column=1, row=8, sticky=tk.W)
 
-    def cb_signup(self):
+    def cb_signin(self):
         if not self.state_signup:
-            self.children['caption'].configure(text="Chat Signup Form")
+            self.children['caption'].configure(text="Chat Signin Form")
             self.children['btn_login'].grid_remove()
-            self.children['btn_signup'].configure(text="OK")
+            self.children['btn_signin'].configure(text="OK")
             self.generate_nickname_field()
             self.state_signup = True
         else:
-            # TODO do actual signup
+            
+            self.parent_frame.signin(
+                                     self.host_var.get(),
+                                     self.port_var.get(),
+                                     self.user_var.get(),
+                                     self.password_var.get(),
+                                     self.nickname_var.get())
+
             self.children['caption'].configure(text="Chat Login Form")
             self.children['btn_login'].grid(column=0, row=8, sticky=tk.W)
             self.children['nickname_label'].grid_remove()
             self.children['nickname_field'].grid_remove()
-            self.children['btn_signup'].grid_remove()
+            self.children['btn_signin'].grid_remove()
             self.user_var.set("")
             self.password_var.set("")
 

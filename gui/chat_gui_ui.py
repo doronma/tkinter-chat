@@ -61,15 +61,13 @@ class MainView(tk.Frame):
         menu.add_cascade(label="Help", menu=help_menu)
 
     def login(self, host, port, user, password):
-        action = "login"
-        action_data = {"action": action, "user_data": {
+        action_data = {"action": "login", "user_data": {
             "user": user, "password": password}}
         self.messaging_dispatcher("CONNECT", ((host, int(port)), action_data))
 
-    def register(self, host, port, user, password):
-        action = "register"
-        action_data = {"action": action, "user_data": {
-            "user": user, "password": password}}
+    def signin(self, host, port, user, password,nickname):
+        action_data = {"action": "signin", "user_data": {
+            "user": user, "password": password, "nickname": nickname}}
         self.messaging_dispatcher("CONNECT", ((host, int(port)), action_data))
 
     def create_main_frame(self):

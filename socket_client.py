@@ -45,6 +45,9 @@ class SocketClient:
                     # Start Socket Listning Thred
                     receive_thread = Thread(target=self.receive)
                     receive_thread.start()
+                elif msg == "SIGNIN":
+                    pass
+
                 else:
                     self.view_dispatcher("LOGIN_ERROR")
                     print("Erorr message is - " + msg)
