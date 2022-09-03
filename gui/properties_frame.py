@@ -38,7 +38,7 @@ class PropertiesFrame(tk.Frame):
 
     def generate_button_frame(self):
         login_button = tk.Button(self, name="btn_login", text="Login", bg="blue", fg="white",
-                                 command=lambda: self.parent_frame.save_properties(
+                                 command=lambda: self.parent_frame.login(
                                      self.host_var.get(),
                                      self.port_var.get(),
                                      self.user_var.get(),

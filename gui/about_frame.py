@@ -12,6 +12,7 @@ class AboatFrame():
     def create_about_dialog(self):
 
         self.about_window.geometry("500x150")
+        self.about_window.iconbitmap('./gui/icons/Chat.ico')
         # Create a Label Text
         dialog_text = "this is a chat pogram witch uses python, gui and threds"
         label = tk.Label(self.about_window, text=dialog_text,

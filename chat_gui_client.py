@@ -8,6 +8,7 @@ if __name__ == '__main__':
 
     root = tk.Tk()
     root.geometry('400x300')
+    root.iconbitmap('./gui/icons/Chat.ico')
     view = MainView(root)
 
     socket_client = SocketClient(view.event_dispatcher)

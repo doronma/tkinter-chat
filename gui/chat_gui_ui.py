@@ -60,9 +60,14 @@ class MainView(tk.Frame):
         help_menu.add_command(label="About", command=lambda: AboatFrame(self))
         menu.add_cascade(label="Help", menu=help_menu)
 
-    def save_properties(self, host, port, user, password):
-        print("in save properties")
+    def login(self, host, port, user, password):
         action = "login"
+        action_data = {"action": action, "user_data": {
+            "user": user, "password": password}}
+        self.messaging_dispatcher("CONNECT", ((host, int(port)), action_data))
+
+    def register(self, host, port, user, password):
+        action = "register"
         action_data = {"action": action, "user_data": {
             "user": user, "password": password}}
         self.messaging_dispatcher("CONNECT", ((host, int(port)), action_data))

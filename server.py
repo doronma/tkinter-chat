@@ -3,8 +3,8 @@
 import json
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
-
-user_dict = {"Dave": "12345", "Yaara": "23456", "guest": ""}
+yaara_user = { "user": "yaara.marcus@gmail.com", "password": "12345", "nickname":"Yaara"}
+user_dict = {"yaara.marcus@gmail.com": yaara_user}
 
 
 def accept_incoming_connections():
@@ -19,7 +19,7 @@ def accept_incoming_connections():
 
 def login_ok(name, password):
     if name in user_dict:
-        return user_dict[name] == password
+        return user_dict[name]['password'] == password
     return False
 
 
@@ -33,11 +33,12 @@ def handle_client(client):  # Takes client socket as argument.
 
     # Login OK
     if login_ok(name, user_data['password']):
-        welcome = f'Welcome {name}! If you ever want to quit, type {{quit}} to exit.'
+        nickname = user_dict[name]['nickname'] 
+        welcome = f'Welcome {nickname}! If you ever want to quit, type {{quit}} to exit.'
         client.send(bytes("OK", "utf8"))
         client.send(bytes(welcome, "utf8"))
-        msg = f"{name} has joined the chat!"
-        start_brodcast(client, name, msg)
+        msg = f"{nickname} has joined the chat!"
+        start_brodcast(client, nickname, msg)
     # Login Failure
     else:
         client.send(bytes("ERROR", "utf8"))
